@@ -1,2 +1,2 @@
 # odom_noise
-This package contains the files to apply noise to Odometry data
+This package contains the files to add noise to odom data
