@@ -6,21 +6,25 @@ import numpy as np
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
 
+
+# Declare last_odom and values you want to multiply with original values
 last_odom = None
 pose = [0.0,0.0,0.0]
 a1 = 0.0
 a2 = 0.0
 a3 = 0.0
 a4 = 0.0
-base_frame = "base_link"
-
 pose[0] =0.0
 pose[1] =0.0
 pose[2] =0.0
+# base_link frame to be published
+base_frame = "base_link"
 
-def callback(data):
+
+ # odom topic callback function
+def odomcallback(data):
 	global last_odom
-	rospy.loginfo("data %s",data.pose.pose)
+	# rospy.loginfo("data %s",data.pose.pose)
 	if(last_odom == None):
 		last_odom = data
 		pose[0] = data.pose.pose.position.x
@@ -29,6 +33,8 @@ def callback(data):
 				data.pose.pose.orientation.y,
 				data.pose.pose.orientation.z,
 				data.pose.pose.orientation.w ]
+
+				# Quaternion to Euler conversion
 		(r, p, y) = tf.transformations.euler_from_quaternion(q)
 		pose[2] = y
 	else:
@@ -46,6 +52,8 @@ def callback(data):
 				data.pose.pose.orientation.y,
 				data.pose.pose.orientation.z,
 				data.pose.pose.orientation.w ]
+
+				# Quaternion to Euler conversion
 		(r,p, theta2) = tf.transformations.euler_from_quaternion(q)
 
 		rot1 = atan2(dy, dx) - theta1
@@ -66,12 +74,13 @@ def callback(data):
 
 
 
+# Odom topic subscriber
 def odom_subscriber():
-
-	rospy.Subscriber("odom",Odometry,callback)
+	rospy.Subscriber("odom",Odometry,odomcallback)
 
 	
 
+# Noisy Odom Publisher
 def noise_odom_publisher():
 	pub= rospy.Publisher('odom_noise',Odometry,queue_size=50)
 	odom_broadcaster=tf.TransformBroadcaster()
@@ -102,8 +111,12 @@ def noise_odom_publisher():
 
 
 if __name__== '__main__':
-	rospy.init_node('odom_noise')
+
+	# Initializing the node
+	rospy.init_node('odom_noise')	
 
 	odom_subscriber()
+
 	noise_odom_publisher()
+	
 	rospy.spin()
