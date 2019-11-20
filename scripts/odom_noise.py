@@ -10,8 +10,8 @@ from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
 # Declare last_odom and values you want to multiply with original values
 last_odom = None
 pose = [0.0,0.0,0.0]
-a1 = 0.0
-a2 = 0.0
+a1 = 0.1
+a2 = 0.2
 a3 = 0.0
 a4 = 0.0
 pose[0] =0.0
